@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus_app
+    restart: unless-stopped
+    volumes:
+      # Bind mount do código fonte
+      - ./:/var/www
+    environment:
+      # Força as variáveis de banco para os hosts do Docker (ignorando as chaves nativas locais do Laragon)
+      - DB_HOST=${DOCKER_DB_HOST:-db}
+      - DB_PORT=${DOCKER_DB_PORT:-3306}
+      - DB_DATABASE=${DOCKER_DB_DATABASE:-nexus_log_filament}
+      - DB_USERNAME=${DOCKER_DB_USERNAME:-nexus_user}
+      - DB_PASSWORD=${DOCKER_DB_PASSWORD:-nexus_pass}
+      # Redireciona a Sessão, Fila e Cache do App para usar Redis (Melhoria drástica de performance local)
+      - SESSION_DRIVER=redis
+      - CACHE_STORE=redis
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - nexus_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nexus_nginx
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      # Acesso aos assets compilados da aplicação
+      - ./:/var/www
+      # Acesso a nossa configuração otimizada FPM 
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - nexus_network
+
+  db:
+    image: mysql:8.0
+    container_name: nexus_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DOCKER_DB_DATABASE:-nexus_log_filament}
+      MYSQL_USER: ${DOCKER_DB_USERNAME:-nexus_user}
+      MYSQL_PASSWORD: ${DOCKER_DB_PASSWORD:-nexus_pass}
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_PASSWORD:-nexus_pass}
+    ports:
+      # Alterado para 3318 para evitar conflitos com outros projetos ativos (ex: quiz-monorepo)
+      - "3318:3306"
+    volumes:
+      - nexus_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DOCKER_DB_PASSWORD:-nexus_pass}"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 90s
+    networks:
+      - nexus_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexus_redis
+    restart: unless-stopped
+    ports:
+      - "6389:6379" # Alterado de 6380 para 6389 para evitar conflitos de portas
+    volumes:
+      - nexus_redis_data:/data
+    networks:
+      - nexus_network
+
+networks:
+  nexus_network:
+    driver: bridge
+
+volumes:
+  nexus_mysql_data:
+  nexus_redis_data:
