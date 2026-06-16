@@ -6,7 +6,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-12">
         <div class="flex items-center gap-4">
-            <x-heroicon-o-tv class="w-12 h-12 text-primary-500" />
+            <x-filament::icon icon="heroicon-o-tv" class="w-12 h-12 text-primary-500" />
             <h1 class="text-4xl font-bold tracking-tight">Nexus WMS <span class="text-gray-400 font-light">| Visão Operacional</span></h1>
         </div>
         <div class="text-right">
@@ -20,7 +20,7 @@
         <!-- KPI 1 -->
         <div class="bg-gray-800 rounded-2xl p-8 border-l-8 border-green-500 shadow-2xl relative overflow-hidden">
             <div class="absolute right-0 top-0 opacity-10">
-                <x-heroicon-o-check-circle class="w-48 h-48 -mr-8 -mt-8" />
+                <x-filament::icon icon="heroicon-o-check-circle" class="w-48 h-48 -mr-8 -mt-8" />
             </div>
             <h2 class="text-gray-400 text-2xl font-medium uppercase tracking-wider mb-2">Expedidos Hoje</h2>
             <div class="text-7xl font-black text-green-400">{{ $pedidosExpedidosHoje }}</div>
@@ -29,7 +29,7 @@
         <!-- KPI 2 -->
         <div class="bg-gray-800 rounded-2xl p-8 border-l-8 border-blue-500 shadow-2xl relative overflow-hidden">
             <div class="absolute right-0 top-0 opacity-10">
-                <x-heroicon-o-clock class="w-48 h-48 -mr-8 -mt-8" />
+                <x-filament::icon icon="heroicon-o-clock" class="w-48 h-48 -mr-8 -mt-8" />
             </div>
             <h2 class="text-gray-400 text-2xl font-medium uppercase tracking-wider mb-2">Pedidos Pendentes (Fila)</h2>
             <div class="text-7xl font-black text-blue-400">{{ $pedidosPendentes }}</div>
@@ -38,7 +38,7 @@
         <!-- KPI 3 -->
         <div class="bg-gray-800 rounded-2xl p-8 border-l-8 border-red-500 shadow-2xl relative overflow-hidden">
             <div class="absolute right-0 top-0 opacity-10">
-                <x-heroicon-o-exclamation-triangle class="w-48 h-48 -mr-8 -mt-8" />
+                <x-filament::icon icon="heroicon-o-exclamation-triangle" class="w-48 h-48 -mr-8 -mt-8" />
             </div>
             <h2 class="text-gray-400 text-2xl font-medium uppercase tracking-wider mb-2">Alerta de Estoque Baixo</h2>
             <div class="text-7xl font-black text-red-400">{{ $produtosBaixoEstoque }}</div>
@@ -48,7 +48,7 @@
     <!-- Recent Activity -->
     <div>
         <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-            <x-heroicon-o-bolt class="w-8 h-8 text-yellow-400" />
+            <x-filament::icon icon="heroicon-o-bolt" class="w-8 h-8 text-yellow-400" />
             Últimas Movimentações
         </h2>
         
