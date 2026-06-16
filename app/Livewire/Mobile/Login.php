@@ -19,7 +19,7 @@ class Login extends Component
             'password' => 'required|min:6',
         ]);
 
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (Auth::guard('mobile')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             session()->regenerate();
             return redirect()->intended(route('mobile.hub'));
         }

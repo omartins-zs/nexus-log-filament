@@ -3,18 +3,16 @@
 use Illuminate\Support\Facades\Route;
 
 // Mobile App Routes
-Route::prefix('app')->group(function () {
+Route::prefix('app')->middleware([\App\Http\Middleware\SetMobileGuard::class])->group(function () {
     // Auth routes (no middleware)
     Route::get('/login', \App\Livewire\Mobile\Login::class)->name('mobile.login');
     Route::post('/logout', function () {
-        auth()->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+        auth('mobile')->logout();
         return redirect()->route('mobile.login');
     })->name('mobile.logout');
 
     // Protected routes
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth:mobile'])->group(function () {
         Route::get('/', \App\Livewire\Mobile\Hub::class)->name('mobile.hub');
         Route::get('/conferencia', \App\Livewire\Mobile\Conferencia::class)->name('mobile.conferencia');
         Route::get('/inventario', \App\Livewire\Mobile\Inventario::class)->name('mobile.inventario');
