@@ -86,6 +86,6 @@ class Conferencia extends Component
 
     public function render()
     {
-        return view('livewire.mobile.conferencia');
+        return view('mobile.conferencia');
     }
 }

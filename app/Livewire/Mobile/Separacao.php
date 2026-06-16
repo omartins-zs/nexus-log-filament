@@ -132,6 +132,6 @@ class Separacao extends Component
 
     public function render()
     {
-        return view('livewire.mobile.separacao');
+        return view('mobile.separacao');
     }
 }
