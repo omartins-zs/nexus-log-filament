@@ -18,10 +18,9 @@ Os dados abaixo foram gerados automaticamente pelos Seeders da aplicação e pod
 - **Login Padrão**: Você pode usar o mesmo `admin@nexus.com` e `password` (desde que tenha marcado as 'Permissões Mobile' no painel admin para ele).
 - **Testes com 2 Usuários Simultâneos**: 
   Como as sessões são separadas por guardiões de autenticação, você pode:
-  1. Logar no `/admin` com `admin@nexus.com`.
-  2. Criar um novo Usuário (ex: `conferente@nexus.com`) pelo Painel, marcando as "Permissões Mobile" desejadas.
-  3. Abrir `/app` na mesma janela do navegador e logar com `conferente@nexus.com`.
-  Ambos funcionarão simultaneamente!
+  1. Logar no `/admin` com `admin@nexus.com` (senha: `password`).
+  2. Abrir `/app` na mesma janela do navegador (ou em uma aba anônima) e logar com o operador: `conferente@nexus.com` (senha: `password`).
+  3. Ambos funcionarão simultaneamente!
 
 ---
 

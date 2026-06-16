@@ -93,7 +93,7 @@ Com a aplicação servida, você pode acessar os dois módulos independentes do 
 
 - **Site Institucional (Público)**: [http://localhost:8000](http://localhost:8000) (ou via virtual host `http://nexus-log-filament.test` no Laragon)
 - **Painel Administrativo PCP (Filament)**: [http://localhost:8000/admin](http://localhost:8000/admin)
-  - Logins e senhas padrão: `admin@nexus.com` / `password` (injetaods pelo Seeder).
+  - Logins padrão (Gestor): `admin@nexus.com` / `password` (injetado pelo Seeder).
 - **App Mobile WMS (PWA)**: [http://localhost:8000/app](http://localhost:8000/app)
-  - Acesse no celular para a interface otimizada de chão de fábrica.
+  - Logins padrão (Operador): `conferente@nexus.com` / `password`
   - Para testar com 2 usuários simulando um gerente e um operador, abra o `/admin` e o `/app` em abas diferentes do mesmo navegador. As sessões são totalmente independentes!

@@ -75,8 +75,8 @@ Como a aplicação é baseada em Laravel, você precisará instalar as dependên
 Com os containers rodando e a inicialização concluída, você pode acessar os serviços mapeados para a sua máquina (Host):
 
 - **Site Institucional (Público)**: [http://localhost:8088](http://localhost:8088)
-- **Painel Administrativo PCP (Filament)**: [http://localhost:8088/admin](http://localhost:8088/admin) (Acesse usando os usuários gerados pelo Seeder: `admin@nexus.com` / `password`)
-- **App Mobile WMS (PWA)**: [http://localhost:8088/app](http://localhost:8088/app)
+- **Painel Administrativo PCP (Filament)**: [http://localhost:8088/admin](http://localhost:8088/admin) (Acesse usando o usuário gestor: `admin@nexus.com` / `password`)
+- **App Mobile WMS (PWA)**: [http://localhost:8088/app](http://localhost:8088/app) (Acesse usando o usuário operador: `conferente@nexus.com` / `password`)
   - Interface otimizada para o chão de fábrica. Como os containers suportam sessões separadas nativamente, você pode acessar o `/admin` e o `/app` na mesma janela do navegador sem derrubar o login!
 - **Banco de Dados Externo (MySQL)**: Porta `3318` (Útil se quiser usar DBeaver/HeidiSQL, credenciais: `nexus_user` / `nexus_pass`)
 - **Redis Externo**: Porta `6389`

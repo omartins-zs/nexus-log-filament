@@ -13,8 +13,18 @@ class UserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@nexus.com'],
             [
-                'name' => 'Operador Nexus',
+                'name' => 'Gestor Nexus (Admin)',
                 'password' => Hash::make('password'),
+                'permissoes_mobile' => ['conferencia', 'inventario', 'separacao', 'transferencia', 'enderecamento'],
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'conferente@nexus.com'],
+            [
+                'name' => 'Operador de Galpão',
+                'password' => Hash::make('password'),
+                'permissoes_mobile' => ['conferencia', 'inventario', 'separacao', 'transferencia', 'enderecamento'],
             ]
         );
     }
