@@ -26,11 +26,23 @@ Implementamos os componentes interativos do Livewire para:
 - **Transferência de Produtos (`/app/transferencia`)**: Um fluxo em 4 passos rápidos: Escanear Origem → Selecionar Produto → Escanear Destino → Confirmar Transferência.
 - **Endereçamento de Armazenagem (`/app/enderecamento`)**: Consulta rápida de onde está cada produto, os saldos e validades, escaneando o código de barras de uma prateleira ou produto.
 
-### 🛠️ Como Testar Agora Mesmo
-1. Abra `http://localhost:8000/app/login`
-2. Use o login do seu operador (o mesmo do admin, verifique se ele tem as permissões mobile marcadas no painel Filament).
-3. Você verá o Hub com os botões ativados!
-4. No painel admin (`http://localhost:8000/admin`), vá em "Usuários", selecione as permissões na aba "Permissões Mobile" e cadastre Embalagens.
+### 🛠️ Como Testar as Sessões e Acessos Simultâneos
+Você pode testar os **dois sistemas ao mesmo tempo, no mesmo navegador**, pois as sessões foram separadas com sucesso (guardião `web` para admin e guardião `mobile` para o app).
+
+1. **Acesse o PCP (Painel Administrativo):**
+   - **URL:** `http://localhost:8088/admin`
+   - **Login Padrão:** O e-mail do seu usuário administrador (ex: o usuário que você costuma usar para gerenciar o sistema). Se usou os seeders, utilize o login padrão do seeder ou cadastre um novo.
+   - **O que fazer aqui:** Vá na aba "Usuários", crie ou edite um operador e marque as "Permissões Mobile" (ex: marcar apenas "Inventário" e "Separação"). Deixe esta aba aberta.
+
+2. **Acesse o PWA Mobile (Chão de Fábrica):**
+   - **URL:** `http://localhost:8088/app`
+   - **Login:** Use o e-mail e a senha do **Operador** que você acabou de configurar no passo anterior.
+   - **O que vai acontecer:** Você verá o Hub Central, mas ele só mostrará os botões "Inventário" e "Separação".
+
+3. **Validação das Sessões Independentes:**
+   - Volte para a aba do `/admin` e dê F5. Você **continuará logado como Administrador**.
+   - Volte para a aba do `/app`, clique no botão **"Mais"** (na barra inferior) e depois em **"Sair"**.
+   - Resultado: O Operador será deslogado do PWA, mas se você voltar na aba do `/admin` e atualizar, o seu Administrador continuará logado!
 
 > [!TIP]
-> **Instalando o App**: Se acessar pelo Google Chrome no celular, você verá um prompt para "Adicionar à Tela Inicial". Ao fazer isso, o sistema se comporta como um App nativo, abrindo em tela cheia sem a barra de endereço!
+> **Instalando o App**: Se acessar pelo Google Chrome no celular (ex: `http://192.168.1.X:8088/app`), você verá um prompt para "Adicionar à Tela Inicial". Ao fazer isso, o sistema se comporta como um App nativo, abrindo em tela cheia sem a barra de endereço!
