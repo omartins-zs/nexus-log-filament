@@ -10,7 +10,7 @@
                     {{ $modo === 'conferencia' ? 'border-primary-500 bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400' : 'border-gray-200 bg-white text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
             >
                 <div class="flex flex-col items-center gap-2">
-                    <x-heroicon-o-clipboard-document-check class="w-8 h-8" />
+                    <x-filament::icon icon="heroicon-o-clipboard-document-check" class="w-8 h-8" />
                     <span>Modo Conferência</span>
                     <span class="text-xs font-normal opacity-80">Travar fluxo para Conferência (Packing)</span>
                 </div>
@@ -22,7 +22,7 @@
                     {{ $modo === 'expedicao' ? 'border-purple-500 bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400' : 'border-gray-200 bg-white text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
             >
                 <div class="flex flex-col items-center gap-2">
-                    <x-heroicon-o-truck class="w-8 h-8" />
+                    <x-filament::icon icon="heroicon-o-truck" class="w-8 h-8" />
                     <span>Modo Expedição</span>
                     <span class="text-xs font-normal opacity-80">Travar fluxo para Despacho na Doca</span>
                 </div>
@@ -44,7 +44,7 @@
                 <form wire:submit.prevent="processarBipagem" class="w-full max-w-xl">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <x-heroicon-o-qr-code class="h-6 w-6 text-gray-400" />
+                            <x-filament::icon icon="heroicon-o-qr-code" class="h-6 w-6 text-gray-400" />
                         </div>
                         <input 
                             wire:model.defer="codigo" 
@@ -89,12 +89,12 @@
                                 <td class="px-6 py-4">
                                     @if ($bipagem['sucesso'])
                                         <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400">
-                                            <x-heroicon-o-check-circle class="w-4 h-4"/>
+                                            <x-filament::icon icon="heroicon-o-check-circle" class="w-4 h-4"/>
                                             OK
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md text-xs font-medium bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400">
-                                            <x-heroicon-o-x-circle class="w-4 h-4"/>
+                                            <x-filament::icon icon="heroicon-o-x-circle" class="w-4 h-4"/>
                                             ERRO
                                         </span>
                                     @endif
