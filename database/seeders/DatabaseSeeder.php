@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClienteSeeder::class,
             CentroDistribuicaoSeeder::class,
+            EmbalagemSeeder::class,
             ProdutoSeeder::class,
             EnderecoSeeder::class,
             RecebimentoSeeder::class,

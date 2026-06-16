@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'permissoes_mobile'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,6 +27,16 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'permissoes_mobile' => 'array',
         ];
+    }
+
+    /**
+     * Verifica se o usuário tem permissão para uma funcionalidade mobile.
+     */
+    public function temPermissaoMobile(string $funcionalidade): bool
+    {
+        $permissoes = $this->permissoes_mobile ?? [];
+        return in_array($funcionalidade, $permissoes);
     }
 }

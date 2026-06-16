@@ -7,3 +7,5 @@ Route::get('/', function () {
 });
 
 Route::get('/tv', \App\Livewire\PublicTv::class);
+
+require __DIR__.'/mobile.php';

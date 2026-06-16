@@ -35,11 +35,22 @@ class Produto extends Model
         'largura',
         'comprimento',
         'quantidade_estoque',
+        'embalagem_id',
+        'cor',
+        'linha',
+        'tipo_tinta',
+        'codigo_barras',
+        'unidade_medida',
     ];
 
     public function cliente()
     {
         return $this->belongsTo(Cliente::class);
+    }
+
+    public function embalagem()
+    {
+        return $this->belongsTo(Embalagem::class);
     }
 
     public function pedidos()
