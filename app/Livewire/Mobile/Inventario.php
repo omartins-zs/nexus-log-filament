@@ -24,6 +24,15 @@ class Inventario extends Component
     public function mount(): void
     {
         $this->carregarRecentes();
+
+        $enderecoId = request()->query('enderecoId');
+        if ($enderecoId) {
+            try {
+                $this->selecionarEndereco((int)$enderecoId);
+            } catch (\Exception $e) {
+                // Ignore invalid query parameter
+            }
+        }
     }
 
     public function carregarRecentes(): void

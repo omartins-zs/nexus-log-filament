@@ -12,6 +12,7 @@ use Livewire\Component;
 class Conferencia extends Component
 {
     public string $modo = 'selecao'; // selecao | conferindo | concluido
+    public string $search = '';
 
     public ?int $recebimentoId = null;
     public ?Recebimento $recebimento = null;
@@ -27,6 +28,12 @@ class Conferencia extends Component
     public function carregarRecebimentos(): void
     {
         $this->recebimentos = Recebimento::whereIn('status', ['rascunho', 'em_conferencia'])
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('fornecedor', 'like', '%' . $this->search . '%')
+                      ->orWhere('codigo_nfe', 'like', '%' . $this->search . '%');
+                });
+            })
             ->withCount('lotes')
             ->orderBy('data_recebimento', 'desc')
             ->get();
@@ -79,13 +86,14 @@ class Conferencia extends Component
 
     public function voltar(): void
     {
-        $this->reset(['recebimentoId', 'recebimento', 'itensConferidos', 'totalItens']);
+        $this->reset(['recebimentoId', 'recebimento', 'itensConferidos', 'totalItens', 'search']);
         $this->modo = 'selecao';
         $this->carregarRecebimentos();
     }
 
     public function render()
     {
+        $this->carregarRecebimentos();
         return view('mobile.conferencia');
     }
 }

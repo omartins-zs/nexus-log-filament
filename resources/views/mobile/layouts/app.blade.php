@@ -296,10 +296,147 @@
             }
         }
 
-        // Scanner placeholder function (will be implemented with html5-qrcode)
+        // WMS Scanner Modal Controllers
+        let html5QrcodeScanner = null;
+
         function openScanner() {
+            const modal = document.getElementById('wmsScannerModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+            switchScannerTab('camera');
+        }
+
+        function closeScanner() {
+            stopCameraScanner();
+            const modal = document.getElementById('wmsScannerModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
+
+        function switchScannerTab(tab) {
+            const tabCamera = document.getElementById('tabCamera');
+            const tabManual = document.getElementById('tabManual');
+            const cameraSec = document.getElementById('scannerCameraSection');
+            const manualSec = document.getElementById('scannerManualSection');
+            const manualInput = document.getElementById('manualBarcode');
+            
+            if (tab === 'camera') {
+                tabCamera.style.background = '#f59e0b';
+                tabCamera.style.color = '#0f172a';
+                tabManual.style.background = 'transparent';
+                tabManual.style.color = '#94a3b8';
+                
+                cameraSec.style.display = 'flex';
+                manualSec.style.display = 'none';
+                
+                startCameraScanner();
+            } else {
+                tabManual.style.background = '#f59e0b';
+                tabManual.style.color = '#0f172a';
+                tabCamera.style.background = 'transparent';
+                tabCamera.style.color = '#94a3b8';
+                
+                manualSec.style.display = 'flex';
+                cameraSec.style.display = 'none';
+                
+                stopCameraScanner();
+                setTimeout(() => manualInput.focus(), 150);
+            }
+        }
+
+        function startCameraScanner() {
+            if (html5QrcodeScanner) return;
+            
+            if (typeof Html5Qrcode === 'undefined') {
+                const script = document.createElement('script');
+                script.src = "https://unpkg.com/html5-qrcode";
+                script.onload = () => {
+                    initHtml5Qrcode();
+                };
+                script.onerror = () => {
+                    console.error("Failed to load html5-qrcode library");
+                    switchScannerTab('manual');
+                };
+                document.head.appendChild(script);
+            } else {
+                initHtml5Qrcode();
+            }
+        }
+
+        function initHtml5Qrcode() {
+            try {
+                html5QrcodeScanner = new Html5Qrcode("scanner-reader");
+                const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+                
+                html5QrcodeScanner.start(
+                    { facingMode: "environment" }, 
+                    config,
+                    (decodedText, decodedResult) => {
+                        playBeep();
+                        handleBarcodeScanned(decodedText);
+                    },
+                    (errorMessage) => {
+                        // Scan errors are expected while searching for code
+                    }
+                ).catch(err => {
+                    console.warn("Camera start failed, switching to manual:", err);
+                    switchScannerTab('manual');
+                });
+            } catch (e) {
+                console.error("Html5Qrcode init error:", e);
+                switchScannerTab('manual');
+            }
+        }
+
+        function stopCameraScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner = null;
+                }).catch(err => {
+                    console.warn("Error stopping camera scanner:", err);
+                    html5QrcodeScanner = null;
+                });
+            }
+        }
+
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, ctx.currentTime);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {
+                console.warn("Unable to play beep audio:", e);
+            }
+        }
+
+        function submitManualScan() {
+            const input = document.getElementById('manualBarcode');
+            const code = input.value.trim();
+            if (code) {
+                playBeep();
+                handleBarcodeScanned(code);
+                input.value = '';
+            }
+        }
+
+        function handleBarcodeScanned(barcode) {
             if (typeof Livewire !== 'undefined') {
-                Livewire.dispatch('open-scanner');
+                Livewire.dispatch('barcode-scanned', { barcode: barcode });
+                closeScanner();
+            } else {
+                console.warn("Livewire is not loaded. Scanned barcode:", barcode);
             }
         }
 
@@ -310,5 +447,67 @@
             }
         });
     </script>
+
+    <!-- WMS Scanner Modal -->
+    <div id="wmsScannerModal" class="hidden" style="position: fixed; inset: 0; z-index: 100; display: none; flex-direction: column; justify-content: flex-end;">
+        <div onclick="closeScanner()" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+        
+        <div class="glass-card" style="position: relative; z-index: 110; width: 100%; border-radius: 24px 24px 0 0; background: #1e293b; border-bottom: none; border-left: none; border-right: none; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 25px rgba(0,0,0,0.5);">
+            <div style="width: 40px; height: 4px; background: #475569; border-radius: 2px; margin: 0 auto 0.25rem;"></div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="background: rgba(245, 158, 11, 0.15); border-radius: 8px; padding: 6px; display: flex;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#f59e0b" style="width: 20px; height: 20px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
+                        </svg>
+                    </div>
+                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin: 0; font-family: inherit;">Leitor de Código</h2>
+                </div>
+                <button type="button" onclick="closeScanner()" style="background: rgba(248, 250, 252, 0.05); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #94a3b8;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <div style="display: flex; background: rgba(15, 23, 42, 0.6); padding: 4px; border-radius: 10px; gap: 4px;">
+                <button id="tabCamera" type="button" onclick="switchScannerTab('camera')" style="flex: 1; padding: 8px; border-radius: 8px; border: none; background: #f59e0b; color: #0f172a; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; font-family: inherit;">
+                    Câmera
+                </button>
+                <button id="tabManual" type="button" onclick="switchScannerTab('manual')" style="flex: 1; padding: 8px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; font-family: inherit;">
+                    Digitar / Simular
+                </button>
+            </div>
+            
+            <div id="scannerCameraSection" style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                <div style="width: 100%; max-width: 300px; aspect-ratio: 1; background: rgba(15, 23, 42, 0.8); border-radius: 16px; border: 2px dashed rgba(245, 158, 11, 0.3); overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <div id="scanner-reader" style="width: 100%; height: 100%;"></div>
+                    <div id="scanner-aim" style="position: absolute; width: 65%; height: 65%; border: 2px solid #f59e0b; border-radius: 12px; box-shadow: 0 0 0 2000px rgba(15, 23, 42, 0.5); pointer-events: none; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 100%; height: 2px; background: rgba(239, 68, 68, 0.8); animation: scanLine 2s linear infinite;"></div>
+                    </div>
+                </div>
+                <p style="font-size: 0.75rem; color: #64748b; text-align: center; margin: 0;">Posicione o código de barras ou QR Code dentro do quadrado.</p>
+            </div>
+            
+            <div id="scannerManualSection" class="hidden" style="display: none; flex-direction: column; gap: 0.75rem; margin-bottom: env(safe-area-inset-bottom, 0px);">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="manualBarcode" style="font-size: 0.8rem; font-weight: 600; color: #94a3b8; font-family: inherit;">Código de Barras</label>
+                    <input type="text" id="manualBarcode" placeholder="Digite ou cole o código (Ex: LOTE-001)" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(248, 250, 252, 0.1); border-radius: 12px; padding: 12px 14px; color: #f8fafc; font-family: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='rgba(248, 250, 252, 0.1)'" onkeydown="if(event.key === 'Enter') submitManualScan()">
+                </div>
+                <button type="button" onclick="submitManualScan()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; border: none; border-radius: 12px; padding: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s; font-family: inherit;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='none'">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                    Confirmar Leitura
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scan Line Animation -->
+    <style>
+        @keyframes scanLine {
+            0% { transform: translateY(-60px); }
+            50% { transform: translateY(60px); }
+            100% { transform: translateY(-60px); }
+        }
+    </style>
 </body>
 </html>
