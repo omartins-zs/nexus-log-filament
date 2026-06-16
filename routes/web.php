@@ -8,4 +8,7 @@ Route::get('/', function () {
 
 Route::get('/tv', \App\Livewire\PublicTv::class);
 
+Route::get('/login', function () {
+    return redirect()->route('mobile.login');
+})->name('login');
 require __DIR__.'/mobile.php';
